@@ -1,666 +1,677 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="H · Regime">
+<meta name="theme-color" content="#0A1628" id="theme-meta">
 <title>H · The Regime</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
   :root {
     --navy: #0A1628;
-    --navy-mid: #0F2040;
     --navy-card: #111D33;
     --cyan: #00AEEF;
-    --cyan-dim: #0088BB;
     --silver: #B8C5D6;
     --silver-dim: #6B7E96;
     --white: #F0F4F8;
     --border: rgba(0,174,239,0.18);
-    --card-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,174,239,0.12);
+    --card-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,174,239,0.12);
+    --ex-bg: rgba(0,174,239,0.03);
+    --ex-border: rgba(0,174,239,0.08);
+    --ex-divider: rgba(0,174,239,0.06);
+    --prog-bg: rgba(0,174,239,0.04);
   }
 
-html.light-mode {
-  --navy: #E8F0F8;
-  --navy-mid: #D0DFF0;
-  --navy-card: #FFFFFF;
-  --cyan: #007DC6;
-  --cyan-dim: #005FA3;
-  --silver: #2A3D55;
-  --silver-dim: #5A6E85;
-  --white: #0A1628;
-  --border: rgba(0,125,198,0.2);
-  --card-shadow: 0 24px 80px rgba(0,80,160,0.12), 0 0 0 1px rgba(0,125,198,0.15);
-}
+  html.light {
+    --navy: #E2EBF5;
+    --navy-card: #FFFFFF;
+    --cyan: #006FB0;
+    --silver: #1E3550;
+    --silver-dim: #4A6278;
+    --white: #080F1E;
+    --border: rgba(0,111,176,0.2);
+    --card-shadow: 0 20px 60px rgba(0,60,120,0.1), 0 0 0 1px rgba(0,111,176,0.15);
+    --ex-bg: rgba(0,111,176,0.03);
+    --ex-border: rgba(0,111,176,0.1);
+    --ex-divider: rgba(0,111,176,0.07);
+    --prog-bg: rgba(0,111,176,0.05);
+  }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--navy);
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.3s ease;
+  }
 
-html, body {
-min-height: 100vh;
-background: var(--navy);
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: flex-start;
-font-family: 'DM Sans', sans-serif;
-padding: 32px 20px 48px;
-transition: background 0.3s ease;
-}
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,174,239,0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,174,239,0.022) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
 
-/* Background subtle grid */
-body::before {
-content: '';
-position: fixed;
-inset: 0;
-background-image:
-linear-gradient(rgba(0,174,239,0.03) 1px, transparent 1px),
-linear-gradient(90deg, rgba(0,174,239,0.03) 1px, transparent 1px);
-background-size: 40px 40px;
-pointer-events: none;
-z-index: 0;
-}
+  .app {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: max(env(safe-area-inset-top), 10px) 12px max(env(safe-area-inset-bottom), 6px);
+    overflow: hidden;
+    position: relative;
+  }
 
-.page-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-width: 100%;
-max-width: 390px;
-margin: 0 auto 32px;
-position: relative;
-z-index: 1;
-animation: fadeDown 0.6s ease both;
-}
+  /* TOP BAR */
+  .topbar {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 10;
+  }
 
-.header-left {
-text-align: left;
-}
+  .brand {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: var(--cyan);
+    text-transform: uppercase;
+  }
 
-.page-header .brand {
-font-family: 'Syne', sans-serif;
-font-size: 1.05rem;
-font-weight: 700;
-letter-spacing: 0.35em;
-color: var(--cyan);
-text-transform: uppercase;
-}
+  .toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--ex-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 11px;
+    cursor: pointer;
+    transition: transform 0.15s;
+    user-select: none;
+  }
 
-.page-header .tagline {
-font-size: 0.65rem;
-letter-spacing: 0.4em;
-color: var(--silver-dim);
-text-transform: uppercase;
-margin-top: 4px;
-}
+  .toggle-btn:active { transform: scale(0.93); }
+  .toggle-icon { width: 12px; height: 12px; stroke: var(--cyan); fill: none; }
 
-.theme-toggle {
-background: transparent;
-border: 1px solid var(--border);
-border-radius: 8px;
-width: 40px;
-height: 40px;
-display: flex;
-align-items: center;
-justify-content: center;
-cursor: pointer;
-transition: all 0.3s ease;
-color: var(--cyan);
-}
+  .toggle-label {
+    font-size: 0.54rem;
+    letter-spacing: 0.22em;
+    color: var(--silver-dim);
+    text-transform: uppercase;
+  }
 
-.theme-toggle:hover {
-background: rgba(0,174,239,0.1);
-border-color: var(--cyan);
-}
+  /* SCENE */
+  .scene {
+    width: 100%;
+    max-width: 520px;
+    flex: 1;
+    min-height: 0;
+    perspective: 1400px;
+    position: relative;
+    z-index: 1;
+  }
 
-.theme-toggle svg {
-width: 20px;
-height: 20px;
-stroke: currentColor;
-fill: none;
-stroke-width: 2;
-stroke-linecap: round;
-stroke-linejoin: round;
-}
+  .card-wrap {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.72s cubic-bezier(0.4, 0.2, 0.2, 1);
+    cursor: pointer;
+  }
 
-/* FLIP CARD */
-.scene {
-width: 100%;
-max-width: 390px;
-perspective: 1200px;
-position: relative;
-z-index: 1;
-animation: fadeUp 0.7s 0.1s ease both;
-}
+  .card-wrap.flipped { transform: rotateY(180deg); }
 
-.card-wrap {
-width: 100%;
-position: relative;
-transform-style: preserve-3d;
-transition: transform 0.75s cubic-bezier(0.4, 0.2, 0.2, 1);
-cursor: pointer;
-}
+  .face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: var(--navy-card);
+    border-radius: 22px;
+    border: 1px solid var(--border);
+    box-shadow: var(--card-shadow);
+    padding: 13px 15px 11px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.3s, border-color 0.3s;
+  }
 
-.card-wrap.flipped {
-transform: rotateY(180deg);
-}
+  .face::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    border-radius: 22px 22px 0 0;
+  }
 
-.face {
-width: 100%;
-backface-visibility: hidden;
--webkit-backface-visibility: hidden;
-background: var(--navy-card);
-border-radius: 28px;
-border: 1px solid var(--border);
-box-shadow: var(--card-shadow);
-padding: 32px 28px 36px;
-overflow: hidden;
-position: relative;
-}
+  .face.back { transform: rotateY(180deg); }
 
-.face.back {
-position: absolute;
-top: 0; left: 0;
-transform: rotateY(180deg);
-}
+  /* HEADER */
+  .face-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+  }
 
-/* Cyan glow top strip */
-.face::before {
-content: '';
-position: absolute;
-top: 0; left: 0; right: 0;
-height: 3px;
-background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-border-radius: 28px 28px 0 0;
-}
+  .face-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.1;
+  }
 
-/* Corner accent */
-.face::after {
-content: '';
-position: absolute;
-bottom: -80px; right: -80px;
-width: 200px; height: 200px;
-border-radius: 50%;
-background: radial-gradient(circle, rgba(0,174,239,0.06), transparent 70%);
-pointer-events: none;
-}
+  .face-title span {
+    display: block;
+    font-size: 0.48rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.42em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 1px;
+  }
 
-/* FACE HEADER */
-.face-header {
-display: flex;
-justify-content: space-between;
-align-items: flex-start;
-margin-bottom: 28px;
-}
+  .flip-hint {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.48rem;
+    letter-spacing: 0.2em;
+    color: var(--silver-dim);
+    text-transform: uppercase;
+    padding-top: 3px;
+    flex-shrink: 0;
+  }
 
-.face-title {
-font-family: 'Syne', sans-serif;
-font-size: 1.45rem;
-font-weight: 700;
-color: var(--white);
-letter-spacing: -0.01em;
-line-height: 1.15;
-}
+  .flip-hint svg { width: 10px; height: 10px; stroke: var(--cyan); fill: none; }
 
-.face-title span {
-display: block;
-font-size: 0.6rem;
-font-family: 'DM Sans', sans-serif;
-font-weight: 400;
-letter-spacing: 0.4em;
-color: var(--cyan);
-text-transform: uppercase;
-margin-bottom: 4px;
-}
+  /* BODY */
+  .face-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
 
-.flip-hint {
-font-size: 0.6rem;
-letter-spacing: 0.25em;
-color: var(--silver-dim);
-text-transform: uppercase;
-display: flex;
-align-items: center;
-gap: 5px;
-padding-top: 4px;
-}
+  /* MOBILITY SPLIT ROW */
+  .mobility-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+  }
 
-.flip-hint svg {
-width: 14px; height: 14px;
-stroke: var(--cyan);
-}
+  .mob-col {}
 
-/* PHASE BLOCKS */
-.phase {
-margin-bottom: 22px;
-}
+  .mob-col-label {
+    font-size: 0.48rem;
+    letter-spacing: 0.32em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
 
-.phase-label {
-display: flex;
-align-items: center;
-gap: 10px;
-margin-bottom: 12px;
-}
+  .mob-col-label .dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 4px rgba(0,174,239,0.6);
+    flex-shrink: 0;
+  }
 
-.phase-dot {
-width: 8px; height: 8px;
-border-radius: 50%;
-background: var(--cyan);
-flex-shrink: 0;
-box-shadow: 0 0 8px rgba(0,174,239,0.5);
-}
+  .ex-list {
+    background: var(--ex-bg);
+    border-radius: 11px;
+    border: 1px solid var(--ex-border);
+    overflow: hidden;
+  }
 
-.phase-name {
-font-family: 'Syne', sans-serif;
-font-size: 0.62rem;
-font-weight: 600;
-letter-spacing: 0.4em;
-color: var(--cyan);
-text-transform: uppercase;
-}
+  .ex-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 9px;
+    border-bottom: 1px solid var(--ex-divider);
+    gap: 6px;
+  }
 
-.phase-duration {
-margin-left: auto;
-font-size: 0.6rem;
-letter-spacing: 0.2em;
-color: var(--silver-dim);
-text-transform: uppercase;
-}
+  .ex-row:last-child { border-bottom: none; }
 
-/* EXERCISE ROWS */
-.ex-list {
-display: flex;
-flex-direction: column;
-gap: 0;
-background: rgba(0,174,239,0.03);
-border-radius: 16px;
-border: 1px solid rgba(0,174,239,0.08);
-overflow: hidden;
-}
+  .ex-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1;
+    min-width: 0;
+  }
 
-.ex-row {
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 11px 16px;
-border-bottom: 1px solid rgba(0,174,239,0.06);
-transition: background 0.15s;
-}
+  .ex-name {
+    font-size: 0.68rem;
+    color: var(--white);
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+  }
 
-.ex-row:last-child { border-bottom: none; }
-.ex-row:active { background: rgba(0,174,239,0.06); }
+  .ex-target {
+    font-size: 0.54rem;
+    color: var(--silver-dim);
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+  }
 
-.ex-name {
-font-size: 0.82rem;
-font-weight: 400;
-color: var(--white);
-letter-spacing: 0.01em;
-}
+  .ex-time {
+    font-size: 0.58rem;
+    color: var(--cyan);
+    font-weight: 500;
+    background: rgba(0,174,239,0.1);
+    padding: 1px 7px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
 
-.ex-time {
-font-size: 0.72rem;
-color: var(--cyan);
-font-weight: 500;
-letter-spacing: 0.05em;
-white-space: nowrap;
-margin-left: 12px;
-background: rgba(0,174,239,0.1);
-padding: 3px 10px;
-border-radius: 20px;
-}
+  /* For mobility columns — smaller time badge, no target shown */
+  .mob-col .ex-row { padding: 4px 8px; }
+  .mob-col .ex-name { font-size: 0.63rem; }
+  .mob-col .ex-time { font-size: 0.54rem; padding: 1px 6px; }
 
-.divider {
-height: 1px;
-background: linear-gradient(90deg, transparent, var(--border), transparent);
-margin: 20px 0;
-}
+  /* SECTION LABEL */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
 
-.rounds-badge {
-display: inline-flex;
-align-items: center;
-gap: 6px;
-background: rgba(0,174,239,0.1);
-border: 1px solid rgba(0,174,239,0.2);
-border-radius: 20px;
-padding: 5px 14px;
-font-size: 0.65rem;
-letter-spacing: 0.3em;
-color: var(--cyan);
-text-transform: uppercase;
-margin-bottom: 12px;
-}
+  .section-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--cyan);
+    flex-shrink: 0;
+    box-shadow: 0 0 5px rgba(0,174,239,0.55);
+  }
 
-.progression {
-margin-top: 22px;
-padding: 16px;
-background: rgba(0,174,239,0.04);
-border-left: 2px solid var(--cyan);
-border-radius: 0 12px 12px 0;
-}
+  .section-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.36em;
+    color: var(--cyan);
+    text-transform: uppercase;
+  }
 
-.progression p {
-font-size: 0.75rem;
-color: var(--silver);
-line-height: 1.65;
-letter-spacing: 0.01em;
-}
+  .section-duration {
+    margin-left: auto;
+    font-size: 0.5rem;
+    color: var(--silver-dim);
+  }
 
-.progression strong {
-color: var(--white);
-font-weight: 500;
-}
+  .rounds-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0,174,239,0.08);
+    border: 1px solid rgba(0,174,239,0.15);
+    border-radius: 20px;
+    padding: 2px 9px;
+    font-size: 0.5rem;
+    letter-spacing: 0.14em;
+    color: var(--cyan);
+    text-transform: uppercase;
+    align-self: flex-start;
+    flex-shrink: 0;
+  }
 
-/* FOOD SIDE */
-.principle {
-display: flex;
-gap: 16px;
-align-items: flex-start;
-padding: 16px;
-border-radius: 16px;
-border: 1px solid rgba(0,174,239,0.08);
-background: rgba(0,174,239,0.03);
-margin-bottom: 12px;
-transition: background 0.15s;
-}
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    flex-shrink: 0;
+  }
 
-.principle:active { background: rgba(0,174,239,0.07); }
+  .progression {
+    padding: 7px 11px;
+    background: var(--prog-bg);
+    border-left: 2px solid var(--cyan);
+    border-radius: 0 9px 9px 0;
+    flex-shrink: 0;
+  }
 
-.p-num {
-font-family: 'Syne', sans-serif;
-font-size: 1.3rem;
-font-weight: 700;
-color: rgba(0,174,239,0.2);
-line-height: 1;
-min-width: 28px;
-}
+  .progression p {
+    font-size: 0.6rem;
+    color: var(--silver);
+    line-height: 1.45;
+  }
 
-.p-content {}
+  .progression strong { color: var(--white); font-weight: 500; }
 
-.p-title {
-font-family: 'Syne', sans-serif;
-font-size: 0.72rem;
-font-weight: 600;
-color: var(--white);
-letter-spacing: 0.05em;
-margin-bottom: 5px;
-text-transform: uppercase;
-}
+  /* STRENGTH BLOCK */
+  .strength-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
-.p-text {
-font-size: 0.78rem;
-color: var(--silver);
-line-height: 1.6;
-}
+  /* FLEX BLOCK */
+  .flex-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
-.p-text strong {
-color: var(--cyan);
-font-weight: 500;
-}
+  /* FOOD SIDE */
+  .principles {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
 
-/* MOTTO */
-.motto {
-text-align: center;
-margin-top: 28px;
-position: relative;
-z-index: 1;
-animation: fadeUp 0.7s 0.25s ease both;
-opacity: 0;
-animation-fill-mode: both;
-}
+  .principle {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 11px;
+    border-radius: 12px;
+    border: 1px solid var(--ex-border);
+    background: var(--ex-bg);
+    flex-shrink: 0;
+  }
 
-.motto-text {
-font-family: 'Syne', sans-serif;
-font-size: 0.78rem;
-font-weight: 300;
-color: var(--silver-dim);
-letter-spacing: 0.08em;
-line-height: 1.8;
-}
+  .p-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: rgba(0,174,239,0.18);
+    line-height: 1;
+    min-width: 18px;
+    flex-shrink: 0;
+  }
 
-.motto-text em {
-color: var(--cyan);
-font-style: normal;
-}
+  .p-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.58rem;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+  }
 
-.tap-label {
-text-align: center;
-margin-top: 16px;
-font-size: 0.6rem;
-letter-spacing: 0.35em;
-color: var(--silver-dim);
-text-transform: uppercase;
-position: relative;
-z-index: 1;
-animation: pulse 2.5s ease infinite;
-}
+  .p-text {
+    font-size: 0.65rem;
+    color: var(--silver);
+    line-height: 1.45;
+  }
 
-@keyframes pulse {
-0%, 100% { opacity: 0.5; }
-50% { opacity: 1; }
-}
+  .p-text strong { color: var(--cyan); font-weight: 500; }
 
-@keyframes fadeUp {
-from { opacity: 0; transform: translateY(20px); }
-to { opacity: 1; transform: translateY(0); }
-}
+  /* BOTTOM */
+  .motto {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 5px 0 0;
+    position: relative;
+    z-index: 1;
+  }
 
-@keyframes fadeDown {
-from { opacity: 0; transform: translateY(-12px); }
-to { opacity: 1; transform: translateY(0); }
-}
+  .motto-text {
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    color: var(--silver-dim);
+    line-height: 1.5;
+  }
+
+  .motto-text em { color: var(--cyan); font-style: normal; }
+
+  .tap-hint {
+    font-size: 0.48rem;
+    letter-spacing: 0.35em;
+    color: var(--silver-dim);
+    text-transform: uppercase;
+    margin-top: 3px;
+    animation: pulse 2.5s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.85; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .app { animation: fadeIn 0.45s ease both; }
 </style>
-
 </head>
 <body>
+<div class="app">
 
-<div class="page-header">
-  <div class="header-left">
-    <div class="brand">H · Builds</div>
-    <div class="tagline">Personal Regime · 2026</div>
-  </div>
-  <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark mode">
-    <svg id="sunIcon" viewBox="0 0 24 24" style="display: none;">
-      <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-    </svg>
-    <svg id="moonIcon" viewBox="0 0 24 24">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-    </svg>
-  </button>
-</div>
-
-<div class="scene">
-  <div class="card-wrap" id="card" onclick="this.classList.toggle('flipped')">
-
-    <!-- FRONT: WORKOUT -->
-    <div class="face front">
-      <div class="face-header">
-        <div class="face-title">
-          <span>Protocol</span>
-          The Training
-        </div>
-        <div class="flip-hint">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M1 4v6h6M23 20v-6h-6"/>
-            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15"/>
-          </svg>
-          Flip
-        </div>
-      </div>
-
-      <!-- MOBILITY -->
-      <div class="phase">
-        <div class="phase-label">
-          <div class="phase-dot"></div>
-          <div class="phase-name">Mobility</div>
-          <div class="phase-duration">8 mins</div>
-        </div>
-        <div class="ex-list">
-          <div class="ex-row"><span class="ex-name">Hip Circles</span><span class="ex-time">30s each</span></div>
-          <div class="ex-row"><span class="ex-name">Deep Squat Hold</span><span class="ex-time">60s</span></div>
-          <div class="ex-row"><span class="ex-name">Pigeon Stretch</span><span class="ex-time">60s each</span></div>
-          <div class="ex-row"><span class="ex-name">Hamstring Floor Stretch</span><span class="ex-time">60s each</span></div>
-          <div class="ex-row"><span class="ex-name">Slow Neck Rolls</span><span class="ex-time">30s</span></div>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- STRENGTH -->
-      <div class="phase">
-        <div class="phase-label">
-          <div class="phase-dot"></div>
-          <div class="phase-name">Strength Circuit</div>
-          <div class="phase-duration">25 mins</div>
-        </div>
-        <div class="rounds-badge">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.18-3.36"/></svg>
-          3 Rounds · Rest 60s Between
-        </div>
-        <div class="ex-list">
-          <div class="ex-row"><span class="ex-name">Pike Push Ups</span><span class="ex-time">10 reps</span></div>
-          <div class="ex-row"><span class="ex-name">Wide Grip Push Ups</span><span class="ex-time">15 reps</span></div>
-          <div class="ex-row"><span class="ex-name">Diamond Push Ups</span><span class="ex-time">10 reps</span></div>
-          <div class="ex-row"><span class="ex-name">Pseudo Planche Push Ups</span><span class="ex-time">8 reps</span></div>
-          <div class="ex-row"><span class="ex-name">Bodyweight Squats</span><span class="ex-time">20 reps</span></div>
-          <div class="ex-row"><span class="ex-name">Glute Bridges</span><span class="ex-time">20 reps</span></div>
-          <div class="ex-row"><span class="ex-name">Hollow Body Hold</span><span class="ex-time">30s</span></div>
-          <div class="ex-row"><span class="ex-name">Superman Hold</span><span class="ex-time">30s</span></div>
-          <div class="ex-row"><span class="ex-name">Slow Negative Push Ups</span><span class="ex-time">6 reps</span></div>
-          <div class="ex-row"><span class="ex-name">Slow Calf Raises</span><span class="ex-time">20 reps</span></div>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- FLEXIBILITY -->
-      <div class="phase">
-        <div class="phase-label">
-          <div class="phase-dot"></div>
-          <div class="phase-name">Flexibility Finish</div>
-          <div class="phase-duration">7 mins</div>
-        </div>
-        <div class="ex-list">
-          <div class="ex-row"><span class="ex-name">Seated Forward Fold</span><span class="ex-time">90s</span></div>
-          <div class="ex-row"><span class="ex-name">Butterfly Stretch</span><span class="ex-time">60s</span></div>
-          <div class="ex-row"><span class="ex-name">Hip Flexor Lunge</span><span class="ex-time">60s each</span></div>
-          <div class="ex-row"><span class="ex-name">Chest Opener on Floor</span><span class="ex-time">60s</span></div>
-        </div>
-      </div>
-
-      <div class="progression">
-        <p><strong>Progression Rule —</strong> Every 7 days, if a movement feels manageable, add one rep or one second. Tendons build slow. Don't rush it.</p>
-      </div>
+  <div class="topbar">
+    <div class="brand">H · Regime</div>
+    <div class="toggle-btn" onclick="toggleMode()">
+      <svg class="toggle-icon" id="icon-sun" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <svg class="toggle-icon" id="icon-moon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      <span class="toggle-label" id="toggle-label">Light</span>
     </div>
+  </div>
 
-    <!-- BACK: FUEL -->
-    <div class="face back">
-      <div class="face-header">
-        <div class="face-title">
-          <span>Foundation</span>
-          The Fuel
+  <div class="scene">
+    <div class="card-wrap" id="card" onclick="this.classList.toggle('flipped')">
+
+      <!-- FRONT: WORKOUT -->
+      <div class="face front">
+        <div class="face-header">
+          <div class="face-title">
+            <span>Full Session · 40–45 mins</span>
+            The Training
+          </div>
+          <div class="flip-hint">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 4v6h6M23 20v-6h-6"/>
+              <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+            </svg>
+            Flip
+          </div>
         </div>
-        <div class="flip-hint">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M1 4v6h6M23 20v-6h-6"/>
-            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15"/>
-          </svg>
-          Flip
+
+        <div class="face-body">
+
+          <!-- MOBILITY SPLIT -->
+          <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+            <div class="section-label">
+              <div class="section-dot"></div>
+              <div class="section-name">Mobility</div>
+              <div class="section-duration">8 mins · Non-negotiable</div>
+            </div>
+            <div class="mobility-split">
+              <!-- LEFT: Pre-mobility -->
+              <div class="mob-col">
+                <div class="mob-col-label"><span class="dot"></span>Pre · Warm Up</div>
+                <div class="ex-list">
+                  <div class="ex-row"><div class="ex-left"><span class="ex-name">Hip Circles</span></div><span class="ex-time">30s ea</span></div>
+                  <div class="ex-row"><div class="ex-left"><span class="ex-name">Deep Squat Hold</span></div><span class="ex-time">60s</span></div>
+                  <div class="ex-row"><div class="ex-left"><span class="ex-name">Pigeon Stretch</span></div><span class="ex-time">60s ea</span></div>
+                </div>
+              </div>
+              <!-- RIGHT: Post-mobility -->
+              <div class="mob-col">
+                <div class="mob-col-label"><span class="dot"></span>Post · Loosen</div>
+                <div class="ex-list">
+                  <div class="ex-row"><div class="ex-left"><span class="ex-name">Hamstring Stretch</span></div><span class="ex-time">60s ea</span></div>
+                  <div class="ex-row"><div class="ex-left"><span class="ex-name">Neck Rolls</span></div><span class="ex-time">30s</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- STRENGTH -->
+          <div class="strength-block">
+            <div class="section-label">
+              <div class="section-dot"></div>
+              <div class="section-name">Strength Circuit</div>
+              <div class="section-duration">25 mins</div>
+            </div>
+            <div class="rounds-badge">↺ &nbsp;3 Rounds · Rest 60s Between</div>
+            <div class="ex-list">
+              <div class="ex-row"><div class="ex-left"><span class="ex-name">Pike Push Ups</span><span class="ex-target">Shoulders, upper chest</span></div><span class="ex-time">10 reps</span></div>
+              <div class="ex-row"><div class="ex-left"><span class="ex-name">Wide Grip Push Ups</span><span class="ex-target">Lower &amp; outer chest</span></div><span class="ex-time">15 reps</span></div>
+              <div class="ex-row"><div class="ex-left"><span class="ex-name">Diamond Push Ups</span><span class="ex-target">Triceps</span></div><span class="ex-time">10 reps</span></div>
+              <div class="ex-row"><div class="ex-left"><span class="ex-name">Pseudo Planche Push Ups</span><span class="ex-target">Wrists, forearms, tendons</span></div><span class="ex-time">8 reps</span></div>
+              <div class="ex-row"><div class="ex-left"><span class="ex-name">Bodyweight Squats</span><span class="ex-target">Quads, glutes, knees</span></div><span class="ex-time">20 reps</span></div>
+              <div class="ex-row"><div class="ex-left"><span class="ex-name">Glute Bridges</span><span class="ex-target">Knock knee correction, glutes</span></div><span class="ex-time">20 reps</span></div>
+              <div class="ex-row"><div class="ex-left"><span class="ex-name">Hollow Body Hold</span><span class="ex-target">Core, abs</span></div><span class="ex-time">30s</span></div>
+              <div class="ex-row"><div class="ex-left"><span class="ex-name">Superman Hold</span><span class="ex-target">Back development</span></div><span class="ex-time">30s</span></div>
+              <div class="ex-row"><div class="ex-left"><span class="ex-name">Slow Negative Push Ups</span><span class="ex-target">Tendon strength</span></div><span class="ex-time">6 reps</span></div>
+              <div class="ex-row"><div class="ex-left"><span class="ex-name">Slow Calf Raises</span><span class="ex-target">Calves, ankle stability</span></div><span class="ex-time">20 reps</span></div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- FLEXIBILITY -->
+          <div class="flex-block">
+            <div class="section-label">
+              <div class="section-dot"></div>
+              <div class="section-name">Flexibility Finish</div>
+              <div class="section-duration">7 mins</div>
+            </div>
+            <div class="ex-list">
+              <div class="ex-row"><div class="ex-left"><span class="ex-name">Seated Forward Fold</span><span class="ex-target">Hamstrings — breathe into it</span></div><span class="ex-time">90s</span></div>
+              <div class="ex-row"><div class="ex-left"><span class="ex-name">Butterfly Stretch</span><span class="ex-target">Inner thighs, hips</span></div><span class="ex-time">60s</span></div>
+              <div class="ex-row"><div class="ex-left"><span class="ex-name">Hip Flexor Lunge</span><span class="ex-target">Hip flexors, quads</span></div><span class="ex-time">60s ea</span></div>
+              <div class="ex-row"><div class="ex-left"><span class="ex-name">Chest Opener on Floor</span><span class="ex-target">Chest, shoulders</span></div><span class="ex-time">60s</span></div>
+            </div>
+          </div>
+
+          <div class="progression">
+            <p><strong>Progression —</strong> Every 7 days, add one rep or one second to anything that feels easy. Tendons build slow. Trust it.</p>
+          </div>
+
         </div>
       </div>
 
-      <div class="principle">
-        <div class="p-num">01</div>
-        <div class="p-content">
-          <div class="p-title">Eat Every Day. No Exceptions.</div>
-          <div class="p-text">Your body is building something. It cannot build from nothing. Every training day demands fuel. This is non-negotiable.</div>
+      <!-- BACK: FUEL -->
+      <div class="face back">
+        <div class="face-header">
+          <div class="face-title">
+            <span>Foundation</span>
+            The Fuel
+          </div>
+          <div class="flip-hint">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 4v6h6M23 20v-6h-6"/>
+              <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+            </svg>
+            Flip
+          </div>
         </div>
-      </div>
 
-      <div class="principle">
-        <div class="p-num">02</div>
-        <div class="p-content">
-          <div class="p-title">Your Daily Foundation</div>
-          <div class="p-text">
-            <strong>Morning —</strong> Weetabix with milk. Add a banana or apple.<br>
-            <strong>Midday —</strong> Subway footlong, all veg. Keep it.<br>
-            <strong>Evening —</strong> Rice with yoghurt. Add nuts or seeds where possible.
+        <div class="face-body">
+          <div class="principles">
+            <div class="principle">
+              <div class="p-num">01</div>
+              <div><div class="p-title">Eat Every Day. No Exceptions.</div><div class="p-text">Your body is building something. It cannot build from nothing. Every training day demands fuel.</div></div>
+            </div>
+            <div class="principle">
+              <div class="p-num">02</div>
+              <div><div class="p-title">Your Daily Foundation</div><div class="p-text"><strong>Morning —</strong> Weetabix with milk. Add fruit.<br><strong>Midday —</strong> Subway footlong, all veg.<br><strong>Evening —</strong> Rice with yoghurt. Add nuts.</div></div>
+            </div>
+            <div class="principle">
+              <div class="p-num">03</div>
+              <div><div class="p-title">More. Not Different.</div><div class="p-text">Don't overhaul what you eat. Eat more of it. Bigger portions. A snack between meals.</div></div>
+            </div>
+            <div class="principle">
+              <div class="p-num">04</div>
+              <div><div class="p-title">Water First</div><div class="p-text">Minimum 2 litres daily. Performance, joints, focus — all of it runs on water. Bottle everywhere.</div></div>
+            </div>
+            <div class="principle">
+              <div class="p-num">05</div>
+              <div><div class="p-title">Get Proper Support</div><div class="p-text">GP referral → NHS dietitian. Free. One appointment.<br><strong>Beat UK —</strong> 0808 801 0677</div></div>
+            </div>
+          </div>
+
+          <div class="progression">
+            <p><strong>The Rule —</strong> Consistent beats perfect. Same meals, same times, every day. Build the rhythm. Everything follows.</p>
           </div>
         </div>
       </div>
 
-      <div class="principle">
-        <div class="p-num">03</div>
-        <div class="p-content">
-          <div class="p-title">More. Not Different.</div>
-          <div class="p-text">Don't overhaul what you eat. Eat more of it. Bigger portions. A snack between meals. Build the habit of feeding yourself first.</div>
-        </div>
-      </div>
-
-      <div class="principle">
-        <div class="p-num">04</div>
-        <div class="p-content">
-          <div class="p-title">Water First</div>
-          <div class="p-text">Minimum 2 litres daily. Performance, joints, skin, focus — all of it runs on water. Carry a bottle everywhere.</div>
-        </div>
-      </div>
-
-      <div class="principle">
-        <div class="p-num">05</div>
-        <div class="p-content">
-          <div class="p-title">Get Proper Support</div>
-          <div class="p-text">For a full plan built around your training — speak to your GP. Free NHS dietitian referral. One appointment. Worth every minute.<br><br><strong>Beat UK —</strong> 0808 80[...]</div>
-        </div>
-      </div>
-
-      <div class="progression">
-        <p><strong>The Rule —</strong> Consistent beats perfect. Same meals, same times, every day. Build the rhythm first. Everything else follows.</p>
-      </div>
     </div>
-
   </div>
-</div>
 
-<div class="tap-label">Tap card to flip</div>
-
-<div class="motto">
-  <div class="motto-text">
-    Show up. Feed yourself. Build slowly.<br>
-    <em>Become someone your future self recognises.</em>
+  <div class="motto">
+    <div class="motto-text">Show up. Feed yourself. Build slowly. <em>Become.</em></div>
+    <div class="tap-hint">Tap card to flip</div>
   </div>
+
 </div>
 
 <script>
-  const themeToggle = document.getElementById('themeToggle');
-  const sunIcon = document.getElementById('sunIcon');
-  const moonIcon = document.getElementById('moonIcon');
-  const html = document.documentElement;
-
-  // Check for saved theme preference or default to dark mode
-  const currentTheme = localStorage.getItem('theme') || 'dark';
-  
-  if (currentTheme === 'light') {
-    html.classList.add('light-mode');
-    sunIcon.style.display = 'block';
-    moonIcon.style.display = 'none';
-  } else {
-    sunIcon.style.display = 'none';
-    moonIcon.style.display = 'block';
-  }
-
-  // Toggle theme on button click
-  themeToggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    html.classList.toggle('light-mode');
-    
-    if (html.classList.contains('light-mode')) {
-      localStorage.setItem('theme', 'light');
-      sunIcon.style.display = 'block';
-      moonIcon.style.display = 'none';
+  let isLight = false;
+  function toggleMode() {
+    isLight = !isLight;
+    const html = document.documentElement;
+    const sun = document.getElementById('icon-sun');
+    const moon = document.getElementById('icon-moon');
+    const label = document.getElementById('toggle-label');
+    const meta = document.getElementById('theme-meta');
+    if (isLight) {
+      html.classList.add('light');
+      sun.style.display = 'none';
+      moon.style.display = 'block';
+      label.textContent = 'Dark';
+      meta.content = '#E2EBF5';
     } else {
-      localStorage.setItem('theme', 'dark');
-      sunIcon.style.display = 'none';
-      moonIcon.style.display = 'block';
+      html.classList.remove('light');
+      sun.style.display = 'block';
+      moon.style.display = 'none';
+      label.textContent = 'Light';
+      meta.content = '#0A1628';
     }
-  });
+  }
 </script>
-
 </body>
 </html>
